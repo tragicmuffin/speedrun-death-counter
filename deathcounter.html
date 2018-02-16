@@ -1,0 +1,144 @@
+<html>
+
+<head>
+	<title>Raspberry Pi Server - OBS Death Counter</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Bootstrap - CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<!-- Bootstrap - JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	
+	<style type="text/css">
+	@font-face {
+		font-family: "Mario Font";
+		src: url(SuperMario256.ttf) format("truetype");
+	}
+	.mariofont {
+		font-family: "Mario Font", Verdana, Tahoma;
+	}
+	</style>
+	
+</head>
+
+<body onload="initCookie()">
+
+<script>
+	var deaths = 0;
+	var cookie_name = "deathcounter";
+	var cookie_exp = 86400 * 90;  // expires after 90 days
+	
+	function initCookie() {
+		// Check for existing cookie
+		deaths = getCookie("deathcounter");
+		if (deaths == "") {
+			// If no cookie exists, set deaths to 0
+			deaths = 0;
+		}
+		// Either way, set deaths variable and refresh cookie expiry date.
+		setCookie(cookie_name, deaths, cookie_exp);
+		
+		deaths = parseInt(deaths);
+		
+		// Set counter text to current state of deaths variable.
+		$("#counter").text(deaths);
+		
+		
+		$(document).keydown(function(e) {
+		switch(e.which) {
+			case 37: // left
+			decrement();
+			break;
+			
+			case 39: // right
+			increment();
+
+			default: return; // exit this handler for other keys
+		}
+		e.preventDefault(); // prevent the default action (scroll / move caret)
+});
+	}
+	
+	
+	function setCookie(cname, cvalue, cexp) {
+		var d = new Date();
+		d.setTime(d.getTime() + cexp*1000);
+		var expires = "expires="+ d.toUTCString();
+		document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	}
+	
+	function getCookie(cname) {
+		var name = cname + "=";
+		var decodedCookie = decodeURIComponent(document.cookie);
+		var ca = decodedCookie.split(';');
+		for(var i = 0; i <ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
+	
+	function increment() {
+		deaths = deaths + 1;	// update variable
+		$("#counter").text(deaths);		// update text display
+		setCookie(cookie_name, deaths, cookie_exp);		// update cookie
+	}
+	
+	function decrement() {
+		deaths = deaths - 1;	// update variable
+		$("#counter").text(deaths);		// update text display
+		setCookie(cookie_name, deaths, cookie_exp);		// update cookie
+	}
+	
+	function reset() {
+		deaths = 0;		// update variable
+		$("#counter").text(deaths);		// update text display
+		setCookie(cookie_name, deaths, cookie_exp);		// update cookie
+	}
+	
+	//////// TODO ////////
+	// Add BibleThump
+	// Add key binding
+	// Fix layout
+	// Add option to set counter to a number
+	// Add reset and subtract buttons
+	//////////////////////
+	
+</script>
+
+<div class="container">
+	<div class="well" style="text-align: center">
+		<br />
+		<div class="row">
+			<h3 class="mariofont" style="color: red; font-size: 2rem">Deaths:&nbsp;</h3><h3 id="counter" class="mariofont" style="color: red; font-size: 2rem"></h3>
+		</div>
+	
+		<br /><br />
+		
+		<div class="row">
+			<!-- <button class="btn btn-lg btn-danger" role="button" onclick="increment()">I died.</button> -->
+			<input type="image" width="128" height="110" src="biblethump.jpg" onclick="increment()" />
+		</div>
+		
+		<br /><br />
+		
+		<div class="row">
+			<button class="btn btn-sm btn-info" role="button" onclick="reset()">Reset</button>&nbsp;&nbsp;
+			<button class="btn btn-sm btn-info" role="button" onclick="decrement()">-1</button>
+		</div>
+		
+	</div>
+</div>
+
+</div>
+
+</body>
+
+</html>
